@@ -17,19 +17,13 @@ jobs:
       with:
         dotnet-version: '10.0.x'
         
-    # 直接在根目录执行 restore 和 build，它会自动找到 RCS_API.slnx
-    - name: Restore dependencies
-      run: dotnet restore
-      
+    # 直接在根目录下进行 build，因为它能自动找到 RCS_API.slnx
     - name: Build Backend
-      run: dotnet build --no-restore --configuration Release
+      run: dotnet build RCS_API.slnx --configuration Release
 
   frontend-build:
     runs-on: ubuntu-latest
-    defaults:
-      run:
-        working-directory: ./RCS_React # 前端目录在这里
-        
+    # 【关键修正】这里去掉 defaults，直接在运行步骤里指定 cd 路径
     steps:
     - uses: actions/checkout@v4
     
@@ -38,8 +32,9 @@ jobs:
       with:
         node-version: '20'
         
-    - name: Install dependencies
-      run: npm ci
-        
-    - name: Build Frontend
-      run: npm run build
+    - name: Install dependencies and Build
+      # 使用 shell 语法进入目录并执行
+      run: |
+        cd RCS_React
+        npm ci
+        npm run build
