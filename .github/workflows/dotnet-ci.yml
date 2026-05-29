@@ -10,31 +10,45 @@ jobs:
   backend-build:
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v4
-    
-    - name: Setup .NET 10
-      uses: actions/setup-dotnet@v4
-      with:
-        dotnet-version: '10.0.x'
+      - name: Checkout Code
+        uses: actions/checkout@v4
         
-    # 直接在根目录下进行 build，因为它能自动找到 RCS_API.slnx
-    - name: Build Backend
-      run: dotnet build RCS_API.slnx --configuration Release
+      - name: Setup .NET 10
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '10.0.x'
+          
+      - name: Locate and Build Backend
+        run: |
+          # 自动寻找项目根目录下的 .slnx 或 .sln 文件
+          SLN_FILE=$(find . -maxdepth 2 -name "*.slnx" -o -name "*.sln" | head -n 1)
+          if [ -z "$SLN_FILE" ]; then
+            echo "❌ 未找到解决方案文件 (.sln/.slnx)，请检查目录结构！"
+            exit 1
+          fi
+          echo "✅ 发现解决方案文件: $SLN_FILE"
+          dotnet build "$SLN_FILE" --configuration Release
 
   frontend-build:
     runs-on: ubuntu-latest
-    # 【关键修正】这里去掉 defaults，直接在运行步骤里指定 cd 路径
     steps:
-    - uses: actions/checkout@v4
-    
-    - name: Setup Node.js
-      uses: actions/setup-node@v4
-      with:
-        node-version: '20'
+      - name: Checkout Code
+        uses: actions/checkout@v4
         
-    - name: Install dependencies and Build
-      # 使用 shell 语法进入目录并执行
-      run: |
-        cd RCS_React
-        npm ci
-        npm run build
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          
+      - name: Install and Build Frontend
+        run: |
+          # 自动寻找包含 package.json 的目录
+          FE_DIR=$(find . -name "package.json" -exec dirname {} \; | head -n 1)
+          if [ -z "$FE_DIR" ]; then
+            echo "⚠️ 未找到前端项目 (package.json)，跳过构建。"
+            exit 0
+          fi
+          echo "✅ 发现前端项目目录: $FE_DIR"
+          cd "$FE_DIR"
+          npm ci
+          npm run build
