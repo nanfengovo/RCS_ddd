@@ -1,0 +1,12 @@
+{
+  "name": "rcs-workspace",
+  "version": "1.0.0",
+  "description": "全栈工作区",
+  "scripts": {
+    "check-commit": "dotnet build $(find . -name '*.slnx' | head -n 1) --no-restore --nologo",
+    "check-push": "dotnet build $(find . -name '*.slnx' | head -n 1) --configuration Release --no-restore --nologo"
+  },
+  "devDependencies": {
+    "husky": "^9.0.11"
+  }
+}

@@ -1,0 +1,7 @@
+<Solution>
+  <Project Path="RCS.Api/RCS.Api.csproj" />
+  <Project Path="RCS.AppHost/RCS.AppHost.csproj" />
+  <Project Path="RCS.Application/RCS.Application.csproj" />
+  <Project Path="RCS.Core/RCS.Core.csproj" />
+  <Project Path="RCS.Infrastructure/RCS.Infrastructure.csproj" />
+</Solution>

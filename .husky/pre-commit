@@ -1,0 +1,7 @@
+
+
+echo "⏳ [RCS Pre-commit] 正在执行本地提交前检查..."
+npm run check-commit || {
+    echo "❌ 警告：本地代码编译失败，已拦截 commit 操作！"
+    exit 1
+}

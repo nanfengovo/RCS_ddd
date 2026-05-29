@@ -1,0 +1,61 @@
+name: RCS Fullstack CI
+
+on:
+  push:
+    branches: [ "main", "master" ]
+  pull_request:
+    branches: [ "main", "master" ]
+
+jobs:
+  # 任务 1：后端 .NET 10 编译与测试
+  backend-build:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v4
+    
+    - name: Setup .NET 10
+      uses: actions/setup-dotnet@v4
+      with:
+        dotnet-version: '10.0.x' # 明确指定使用 .NET 10
+        
+    - name: Restore dependencies
+      run: dotnet restore
+      
+    - name: Build Backend
+      run: dotnet build --no-restore --configuration Release
+      
+    # - name: Run Backend Tests (等建了测试项目后取消注释)
+    #   run: dotnet test --no-build --configuration Release
+
+  # 任务 2：前端 React 构建检查 (假设未来你的 React 代码在 RCS.React 目录下)
+  frontend-build:
+    runs-on: ubuntu-latest
+    # 设置工作目录，后续的 run 命令都会在这个目录下执行
+    defaults:
+      run:
+        working-directory: ./RCS.React 
+        
+    steps:
+    - uses: actions/checkout@v4
+    
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: '20' # 使用长期支持版的 Node
+        
+    - name: Install dependencies
+      # 先检查该目录是否存在，防止前期你还没建前端项目时流水线报错
+      run: |
+        if [ -d "." ]; then
+          npm ci
+        else
+          echo "前端项目暂未创建，跳过依赖安装"
+        fi
+        
+    - name: Build Frontend
+      run: |
+        if [ -d "." ]; then
+          npm run build
+        else
+          echo "前端项目暂未创建，跳过构建"
+        fi
