@@ -23,6 +23,7 @@ var apiService = builder.AddProject<Projects.RCS_Api>("rcs-api")
                         .WithReference(postgres)
                         .WithReference(redis)
                         .WithReference(mongo)
-                        .WithReference(rabbitmq);
+                        .WithReference(rabbitmq)
+                        .WaitFor(postgres); // 确保 API 在 PostgreSQL 准备好后才启动
 
 builder.Build().Run();
