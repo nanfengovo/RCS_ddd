@@ -1,5 +1,6 @@
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using RCS.Infrastructure.Auth;
 using RCS.Infrastructure.Exceptions;
 using RCS.Infrastructure.Logging;
 using RCS.Infrastructure.Observability; // 👈 引入可观测性
@@ -14,7 +15,8 @@ public static class DependencyInjection
         services.AddRcsOpenTelemetry()   // 🚀 1. 挂载雷达 (OTel)
                 .AddRcsLogging()         // 📝 2. 挂载日志拦截器
                 .AddRcsExceptionHandling() // 🛡️ 3. 挂载异常护城河
-                .AddRcsPersistence(configuration); // 💾 4. 挂载数据库与仓储
+                .AddRcsPersistence(configuration) // 💾 4. 挂载数据库与仓储
+                .AddRcsAuth(configuration);            // 🔐 5. 挂载认证授权
 
         return services;
     }
