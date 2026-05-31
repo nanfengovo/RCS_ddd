@@ -29,11 +29,16 @@ internal class CurrentUser : ICurrentUser
 
     public Task<string[]> GetPermissionsAsync()
     {
-        throw new NotImplementedException();
+        // 极客预留：未来这里换成 await _redis.GetAsync($"UserPermissions:{UserId}");
+        return Task.FromResult(new[] { "wms:location:lock", "sys:user:view" });
     }
 
-    public Task<bool> HasPermissionAsync(string permissionCode)
+    public async Task<bool> HasPermissionAsync(string permissionCode)
     {
-        throw new NotImplementedException();
+        // 1. 获取当前用户的所有权限 (走缓存)
+        var permissions = await GetPermissionsAsync();
+        
+        // 2. 判断是否包含需要的权限 (如果是超管，可以直接 return true)
+        return permissions.Contains(permissionCode);
     }
 }

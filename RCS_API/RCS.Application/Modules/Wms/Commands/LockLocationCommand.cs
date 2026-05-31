@@ -1,4 +1,5 @@
 using MediatR;
+using RCS.Core.Exceptions;
 using RCS.Core.Modules.Wms.Repositories;
 
 namespace RCS.Application.Modules.Wms.Commands
@@ -33,7 +34,7 @@ namespace RCS.Application.Modules.Wms.Commands
             var location = await _locationRepository.GetByCodeAsync(request.LocationCode);
             if(location == null)
             {
-                throw new Exception($"库位 {request.LocationCode} 不存在，无法锁定！");
+                throw new DomainException($"库位 {request.LocationCode} 不存在，无法锁定！");
             }
 
             location.LockForTask(request.TaskId);

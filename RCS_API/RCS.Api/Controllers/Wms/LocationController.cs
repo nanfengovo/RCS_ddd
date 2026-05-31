@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using RCS.Application.Modules.Wms.Commands;
 using RCS.Core.Common;
+using RCS.Core.Common.Security;
 using RCS.Core.Exceptions;
 using RCS.Infrastructure.Persistence.EntityFramework;
 
@@ -39,12 +40,12 @@ public class LocationController : ControllerBase
     // 预期：控制台和 OpenTelemetry 中打印出结构化的入参和耗时日志
     // =================================================================
     [HttpPost("{locationCode}/lock")]
+    [RequirePermission("wms:location:lock")] // 👈 就是这一行！极致优雅的 PBAC 鉴权！
+    [ProducesResponseType(typeof(ApiResponse), StatusCodes.Status200OK)] 
     public async Task<IActionResult> LockLocation(string locationCode, [FromBody] LockLocationRequest request)
     {
-        // 注意：这里我们故意用上一回合写的 Command 来测试
+        // 如果没有权限，连这个方法的门都进不来！AOP 已经在外面把他踢回去了！
         var command = new LockLocationCommand(locationCode, request.TaskId);
-        
-        // 当这行代码执行时，LoggingBehavior 应该自动在控制台打印一条漂亮的日志
         await _mediator.Send(command);
 
         return Ok(ApiResponse.Success("库位锁定命令已发送！"));
