@@ -31,24 +31,22 @@ jobs:
 
   frontend-build:
     runs-on: ubuntu-latest
+    # 🚀 极客配置：让这个 Job 里的所有 run 指令，默认都在 rcs-frontend 目录下执行！
+    defaults:
+      run:
+        working-directory: ./rcs-frontend
+
     steps:
       - name: Checkout Code
         uses: actions/checkout@v4
-        
+
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: '20'
-          
-      - name: Install and Build Frontend
-        run: |
-          # 自动寻找包含 package.json 的目录
-          FE_DIR=$(find . -name "package.json" -exec dirname {} \; | head -n 1)
-          if [ -z "$FE_DIR" ]; then
-            echo "⚠️ 未找到前端项目 (package.json)，跳过构建。"
-            exit 0
-          fi
-          echo "✅ 发现前端项目目录: $FE_DIR"
-          cd "$FE_DIR"
-          npm ci
-          npm run build
+          node-version: '20' # 建议用较新的 LTS 版本
+
+      - name: Install Dependencies
+        run: npm install
+
+      - name: Build Frontend
+        run: npm run build
