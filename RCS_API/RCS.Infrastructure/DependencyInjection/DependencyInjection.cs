@@ -16,7 +16,8 @@ public static class DependencyInjection
                 .AddRcsLogging()         // 📝 2. 挂载日志拦截器
                 .AddRcsExceptionHandling() // 🛡️ 3. 挂载异常护城河
                 .AddRcsPersistence(configuration) // 💾 4. 挂载数据库与仓储
-                .AddRcsAuth(configuration);            // 🔐 5. 挂载认证授权
+                .AddRcsAuth(configuration)           // 🔐 5. 挂载认证授权
+                .AddRcsExternalSystems(configuration); // 🛰️ 6. 挂载第三方外部系统防腐层
 
         return services;
     }

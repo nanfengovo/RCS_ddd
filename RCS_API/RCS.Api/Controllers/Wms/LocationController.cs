@@ -1,4 +1,5 @@
 using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using RCS.Application.Modules.Wms.Commands;
@@ -40,6 +41,7 @@ public class LocationController : ControllerBase
     // 预期：控制台和 OpenTelemetry 中打印出结构化的入参和耗时日志
     // =================================================================
     [HttpPost("{locationCode}/lock")]
+    [Authorize] // 🔐 先验证用户必须登录
     [RequirePermission("wms:location:lock")] // 👈 就是这一行！极致优雅的 PBAC 鉴权！
     [ProducesResponseType(typeof(ApiResponse), StatusCodes.Status200OK)] 
     public async Task<IActionResult> LockLocation(string locationCode, [FromBody] LockLocationRequest request)
@@ -85,9 +87,9 @@ public class LocationController : ControllerBase
         return Ok(ApiResponse.Success(locations, "链路追踪测试完成！快去 Aspire Dashboard 看看！"));
     }
 
-        // 接收前端 JSON 报文的极简 DTO
-        public class LockLocationRequest
-        {
-            public Guid TaskId { get; set; }
-        }
+    // 接收前端 JSON 报文的极简 DTO
+    public class LockLocationRequest
+    {
+        public Guid TaskId { get; set; }
+    }
 }

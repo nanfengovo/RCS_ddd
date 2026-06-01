@@ -62,6 +62,7 @@ else
     // a different user from the one MongoDB created on first startup.
     var mongo = builder.AddMongoDB("mongo-audit-server", userName: mongoUser, password: mongoPwd)
                        .WithContainerName("RCS_Mongo_Audit_Clean")
+                       .WithDataVolume("rcs-mongo-audit-data")
                        .WithEndpoint(port: 27017, targetPort: 27017, name: "tcp");
 
     mongo.WithMongoExpress(c =>

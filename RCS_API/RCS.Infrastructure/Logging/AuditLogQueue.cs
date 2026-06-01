@@ -6,7 +6,7 @@ namespace RCS.Infrastructure.Logging;
 /// <summary>
 /// 极客架构：审计日志内存无锁队列 (In-Memory MQ)
 /// </summary>
-internal class AuditLogQueue
+public class AuditLogQueue
 {
     // Bounded 意味着有界队列，防止极端情况下日志堆积撑爆内存 (比如 Mongo 宕机了一整天)
     // 设个 10 万的容量，满了就丢弃旧的，保全系统主业务不挂。
