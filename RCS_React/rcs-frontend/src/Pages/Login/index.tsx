@@ -25,11 +25,15 @@ const Login = () => {
           borderRadius: 6, // 顺手把组件的圆角改小一点，显得更硬朗现代
         }
   }}>
-    <div className={`min-h-screen flex relative transition-colors duration-300 ${isDark ? 'bg-[#1C1C1C] text-white' : 'bg-gray-50 text-slate-900'}`}>
-      {/* 🚀 注入灵魂：纯 CSS 绘制的科幻网格背景！
-            原理：利用两个透明渐变色画出 1px 的横线和竖线，并设置 24px 的网格大小。
-            pointer-events-none 确保这个网格只是装饰，不会阻挡鼠标点击！ */}
-        <div className="absolute inset-0 z-0 pointer-events-none bg-[linear-gradient(to_right,#80808012_1px,transparent_1px),linear-gradient(to_bottom,#80808012_1px,transparent_1px)] bg-[size:24px_24px]"></div>
+    <div className={`min-h-screen flex relative transition-colors duration-300 overflow-hidden ${isDark ? 'bg-[#0f1219] text-white' : 'bg-[#eef2f6] text-slate-900'}`}>
+        
+        {/* Light mode diagonal split background */}
+        {!isDark && (
+          <div className="absolute inset-0 z-0 bg-white shadow-[0_0_50px_rgba(0,0,0,0.05)]" style={{ clipPath: 'polygon(60% 0, 100% 0, 100% 100%, 25% 100%)' }}></div>
+        )}
+
+        {/* Global Grid Background */}
+        <div className="absolute inset-0 z-0 pointer-events-none bg-[linear-gradient(to_right,#80808012_1px,transparent_1px),linear-gradient(to_bottom,#80808012_1px,transparent_1px)] bg-[size:32px_32px]"></div>
         <div className='absolute top-6 right-6 z-50'>
             <Button 
                 type="text"
@@ -50,21 +54,52 @@ const Login = () => {
             />
         </div>
 
-        {/* 左侧：AGV 动效与品牌宣传区 */}
-        <div className="hidden md:flex md:w-1/2 flex-col items-center justify-center relative z-10 border-r border-white/5">
-          <h1 className="text-4xl font-bold tracking-widest text-indigo-500">AGV SYSTEM</h1>
-          <AgvAnimation />
+        {/* 左侧：品牌宣传与动效区 */}
+        <div className="hidden md:flex md:w-1/2 flex-col justify-center pl-[10%] pr-10 relative z-10">
+          
+          {/* Logo & Title */}
+          <div className="mb-10 flex items-center gap-4">
+             {/* Logo Icon */}
+             <div className="w-14 h-14 bg-gradient-to-br from-indigo-500 to-purple-600 rounded-2xl flex items-center justify-center shadow-lg shadow-indigo-500/30">
+                <div className="w-0 h-0 border-l-[10px] border-r-[10px] border-b-[16px] border-l-transparent border-r-transparent border-b-white/90 translate-y-[-2px]"></div>
+             </div>
+             <div>
+                <div className="text-[11px] font-bold text-cyan-600 dark:text-cyan-400 tracking-widest uppercase mb-1">RCS Control Suite</div>
+                <h1 className="text-3xl font-bold tracking-wider text-slate-800 dark:text-white">RCS 管理系统</h1>
+             </div>
+          </div>
+
+          {/* Animation Area */}
+          <div className="w-full max-w-[500px]">
+            <AgvAnimation />
+          </div>
+
+          {/* Status Cards */}
+          <div className="flex gap-4 mt-6 w-full max-w-[500px]">
+             <div className="flex-1 p-4 rounded-xl border border-white/40 dark:border-white/10 bg-white/30 dark:bg-black/20 backdrop-blur-md shadow-lg shadow-black/5">
+                <div className="text-[10px] text-gray-500 dark:text-gray-400 font-bold mb-1">AMHS</div>
+                <div className="text-sm font-bold text-cyan-600 dark:text-cyan-400">READY</div>
+             </div>
+             <div className="flex-1 p-4 rounded-xl border border-white/40 dark:border-white/10 bg-white/30 dark:bg-black/20 backdrop-blur-md shadow-lg shadow-black/5">
+                <div className="text-[10px] text-gray-500 dark:text-gray-400 font-bold mb-1">WMS</div>
+                <div className="text-sm font-bold text-cyan-600 dark:text-cyan-400">ONLINE</div>
+             </div>
+             <div className="flex-1 p-4 rounded-xl border border-white/40 dark:border-white/10 bg-white/30 dark:bg-black/20 backdrop-blur-md shadow-lg shadow-black/5">
+                <div className="text-[10px] text-gray-500 dark:text-gray-400 font-bold mb-1">DEVICE</div>
+                <div className="text-sm font-bold text-cyan-600 dark:text-cyan-400">SYNC</div>
+             </div>
+          </div>
         </div>
 
         {/* 右侧：核心登录表单区 */}
         <div className="flex-1 flex flex-col items-center justify-center relative z-10">
             <div className="relative overflow-hidden rounded-xl p-[2px]">
                 {/* 旋转的发光层：用 Tailwind 的 animate-spin 配合自定义渐变 */}
-                <div className="absolute inset-[-100%] animate-spin bg-[conic-gradient(from_90deg_at_50%_50%,#000000_0%,#4f46e5_50%,#000000_100%)]" />
-                <Card className="w-[400px] shadow-2xl bg-[#1C1C1C] relative z-10 rounded-xl">
+                <div className="absolute inset-[-100%] animate-[spin_4s_linear_infinite] bg-[conic-gradient(from_90deg_at_50%_50%,transparent_0%,#4f46e5_50%,transparent_100%)]" />
+                <Card className="w-[400px] shadow-2xl bg-white dark:bg-[#151b28] border-none relative z-10 rounded-xl">
                     <div className="mb-8">
-                        <div className="text-indigo-500 font-bold text-xs tracking-widest">RCS</div>
-                        <h2 className="text-2xl font-bold mt-1">{t('login.title')}</h2>
+                        <div className="text-cyan-600 dark:text-cyan-400 font-bold text-[10px] tracking-widest uppercase mb-1">OPERATOR ACCESS</div>
+                        <h2 className="text-2xl font-bold mt-1 text-slate-800 dark:text-white">{t('login.title') || '密码登录'}</h2>
                     </div>
                     <Form
                     name="login"
