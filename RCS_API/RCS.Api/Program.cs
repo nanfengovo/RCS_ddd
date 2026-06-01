@@ -3,6 +3,7 @@ using RCS.Application.Modules.Wms.Commands;
 using Scalar.AspNetCore;
 using RCS.Infrastructure.Persistence.EntityFramework;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.HttpLogging;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -18,6 +19,28 @@ builder.Services.AddMediatR(cfg =>
 builder.Services.AddControllers();
 builder.Services.AddOpenApi(); // .NET 10 原生 OpenAPI
 
+// ==========================================
+// 🚀 极客基建：全局入站 HTTP 流量雷达
+// ==========================================
+builder.Services.AddHttpLogging(options =>
+{
+    // 🔥 杀手锏特性：把 Request 和 Response 融合成一条极其干净的日志！
+    // 告别以前那种“一条进、一条出”刷屏的痛苦
+    options.CombineLogs = true; 
+
+    // 🎯 精准打击：我们只抓取最有运维价值的字段，绝不拖慢系统性能
+    options.LoggingFields = HttpLoggingFields.RequestMethod |
+                            HttpLoggingFields.RequestPath |
+                            HttpLoggingFields.ResponseStatusCode |
+                            HttpLoggingFields.Duration |
+                            HttpLoggingFields.RequestHeaders;
+
+    // 🕵️‍♂️ 重点监控：抓取客户端类型和真实 IP
+    options.RequestHeaders.Add("User-Agent");
+    options.RequestHeaders.Add("X-Forwarded-For"); 
+});
+
+
 var app = builder.Build();
 
 // ==========================================
@@ -30,6 +53,9 @@ if (app.Environment.IsDevelopment())
     app.MapOpenApi(); 
     app.MapScalarApiReference(); // 挂载绝美的 Scalar API UI
 }
+
+// 🚀 开启入站雷达拦截！(所有路过的 HTTP 请求都会被它拍下快照)
+app.UseHttpLogging();
 
 app.UseAuthorization();
 app.MapControllers();
