@@ -3,6 +3,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using RCS.Core.Modules.Auth.Repositories;
 using RCS.Core.Modules.Wms.Repositories; // 你的核心层接口
+using RCS.Infrastructure.Logging.Mongo;
 using RCS.Infrastructure.Modules.Auth.Repositories;
 using RCS.Infrastructure.Modules.Wms.Repositories;
 using RCS.Infrastructure.Persistence.EntityFramework; // 你的基础设施层实现类

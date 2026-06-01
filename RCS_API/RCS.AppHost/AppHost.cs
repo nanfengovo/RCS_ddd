@@ -51,31 +51,30 @@ else
                         .WithRedisInsight()
                         .WithContainerName("RCSCoreRedis")
                         .WithLifetime(ContainerLifetime.Persistent);
-                        
+
     // 🎯 极客手术：切除 Redis 默认的无密码健康检查探针，消除 Unhealthy 警告
     var redisHc = redisCache.Resource.Annotations.FirstOrDefault(a => a.GetType().Name.Contains("HealthCheck"));
     if (redisHc != null) redisCache.Resource.Annotations.Remove(redisHc);
 
-    // 3. Mongo
-    var mongo = builder.AddMongoDB("mongodb-server")
-                       .WithEnvironment("MONGO_INITDB_ROOT_USERNAME", mongoUser)
-                       .WithEnvironment("MONGO_INITDB_ROOT_PASSWORD", mongoPwd)
-                       .WithContainerName("RCSCoreLogMongo")
-                       .WithLifetime(ContainerLifetime.Persistent);
-                       
-    // 修复伴生 UI 崩溃：把账号密码同步给 MongoExpress
-    mongo.WithMongoExpress(c => 
+    // 3. MongoDB
+    // Use the same Aspire parameters for container initialization, MongoExpress,
+    // and the injected connection string. Otherwise the API may authenticate with
+    // a different user from the one MongoDB created on first startup.
+    var mongo = builder.AddMongoDB("mongo-audit-server", userName: mongoUser, password: mongoPwd)
+                       .WithContainerName("RCS_Mongo_Audit_Clean");
+
+    mongo.WithMongoExpress(c =>
     {
         c.WithEnvironment("ME_CONFIG_MONGODB_ADMINUSERNAME", mongoUser)
          .WithEnvironment("ME_CONFIG_MONGODB_ADMINPASSWORD", mongoPwd);
     });
-    
-    // 🎯 极客手术：切除 Mongo 默认的无密码健康检查探针，消除 Unhealthy 警告
+
+    // 3. 切除探针
     var mongoHc = mongo.Resource.Annotations.FirstOrDefault(a => a.GetType().Name.Contains("HealthCheck"));
     if (mongoHc != null) mongo.Resource.Annotations.Remove(mongoHc);
 
     mongoDb = mongo.AddDatabase("RcsLogDb");
-    // 🎯 极客补刀：切除逻辑数据库 (RcsLogDb) 上的默认健康检查探针
+
     var mongoDbHc = mongoDb.Resource.Annotations.FirstOrDefault(a => a.GetType().Name.Contains("HealthCheck"));
     if (mongoDbHc != null) mongoDb.Resource.Annotations.Remove(mongoDbHc);
 
