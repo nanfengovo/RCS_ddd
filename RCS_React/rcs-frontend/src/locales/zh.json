@@ -1,0 +1,12 @@
+{
+    "login":{
+        "title": "登录",
+        "username": "用户名",
+        "password": "密码",
+        "remember": "记住我",
+        "forgetPassword": "忘记密码",
+        "pwdMessage": "请输入密码",
+        "usernameMessage": "请输入用户名",
+        "submit": "登录"
+    }
+}

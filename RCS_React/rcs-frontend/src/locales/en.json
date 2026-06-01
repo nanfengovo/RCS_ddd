@@ -1,0 +1,12 @@
+{
+    "login": {
+        "title": "Login",
+        "username": "username",
+        "password": "password",
+        "rememberMe": "remember me",
+        "forgotPassword": "forgot password",
+        "pwdMessage": "Please input your password",
+        "usernameMessage": "Please input your username",
+        "submit": "login"
+    }
+}
