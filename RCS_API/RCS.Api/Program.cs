@@ -40,6 +40,21 @@ builder.Services.AddHttpLogging(options =>
     options.RequestHeaders.Add("X-Forwarded-For"); 
 });
 
+// 1. 定义一个允许跨域的策略名称
+var MyAllowSpecificOrigins = "_myAllowSpecificOrigins";
+
+// 2. 注入 CORS 服务
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy(name: MyAllowSpecificOrigins,
+                      policy =>
+                      {
+                          policy.WithOrigins("http://localhost:5173") // 👈 这里填你 React 前端的准确地址
+                                .AllowAnyHeader()   // 允许携带任何请求头 (如 Authorization 里的 Token)
+                                .AllowAnyMethod()   // 允许任何 HTTP 方法 (GET, POST, DELETE 等)
+                                .AllowCredentials(); // 允许携带凭证 (如果将来用到 Cookie)
+                      });
+});
 
 var app = builder.Build();
 
@@ -56,7 +71,7 @@ if (app.Environment.IsDevelopment())
 
 // 🚀 开启入站雷达拦截！(所有路过的 HTTP 请求都会被它拍下快照)
 app.UseHttpLogging();
-
+app.UseCors(MyAllowSpecificOrigins); // 开启 CORS
 app.UseAuthorization();
 app.MapControllers();
 

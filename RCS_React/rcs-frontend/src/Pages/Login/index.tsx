@@ -1,11 +1,12 @@
 //1，引入 React 的核心钩子 useState
 import {useState} from 'react';
 //2. 引入Ant Design 的组件和主题引擎
-import { ConfigProvider, theme, Button,Card,Form,Input,Flex,Checkbox} from 'antd';
+import { ConfigProvider, theme, Button,Card,Form,Input,Flex,Checkbox, message} from 'antd';
 //3， 引入小太阳和小月亮图标
 import { SunOutlined, MoonOutlined,LockOutlined, UserOutlined} from '@ant-design/icons';
 import { useTranslation } from 'react-i18next';
 import AgvAnimation from './components/AgvAnimation';
+import { postApiSysAuthLogin ,type ApiResponse} from '../../api/client/index';
 
     // 定义一个布尔值状态： isDark 默认是true(深色模式)
     //setIsDark 是唯一能修改 isDark 的遥控器
@@ -13,9 +14,42 @@ import AgvAnimation from './components/AgvAnimation';
 const Login = () => {
     const [isDark, setIsDark] = useState(true);
     const { t, i18n } = useTranslation();
-    const onFinish = (values: any) => {
+    const onFinish = async (values: any) => {
     console.log('Received values of form: ', values);
-  };
+    try{
+        const result = await postApiSysAuthLogin({
+            body:{
+                username: values.username,
+                password: values.password
+            }
+        });
+        const responseData = result.data as ApiResponse & { data?: { token: string } };
+        console.log(responseData);
+        if(responseData.code === 200 && responseData.isSuccess){
+            // 登录成功，拿到 token 了！
+            const token = responseData.data?.token;
+            console.log('登录成功，拿到 token 了！', token);
+            if(token){
+                // 🚀 1. 存入浏览器的本地存储
+                localStorage.setItem('accessToken', token);
+                
+                // 🚀 2. 给予用户成功反馈
+                message.success('登录成功，正在进入系统...');
+                
+                // 🚀 3. 页面跳转（进入你的 RCS 监控台首页）
+                // 如果你用了 react-router-dom，建议使用 const navigate = useNavigate(); navigate('/')
+                // 如果是最简单的做法，可以直接用：
+                window.location.href = '/';
+            }
+        }
+        else{
+            message.error(responseData.message || '登录失败');
+        }
+    }catch(error){
+        console.log(error);
+    }
+    };
+
 
   return (
   <ConfigProvider theme ={{ algorithm: isDark ? theme.darkAlgorithm : theme.defaultAlgorithm,
@@ -116,7 +150,7 @@ const Login = () => {
                     <Form.Item
                         name="password"
                         rules={[{ required: true, message: t('login.pwdMessage') } ]}>
-                        <Input prefix={<LockOutlined />} type="password" placeholder={t('login.password')} />
+                        <Input.Password prefix={<LockOutlined />} placeholder={t('login.password')} />
                     </Form.Item>
                     <Form.Item>
                         <Flex justify="space-between" align="center">
