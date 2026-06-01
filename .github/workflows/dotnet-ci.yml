@@ -34,7 +34,7 @@ jobs:
     # 🚀 极客配置：让这个 Job 里的所有 run 指令，默认都在 rcs-frontend 目录下执行！
     defaults:
       run:
-        working-directory: ./rcs-frontend
+        working-directory: ./RCS_React/rcs-frontend
 
     steps:
       - name: Checkout Code
