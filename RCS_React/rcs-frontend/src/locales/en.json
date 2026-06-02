@@ -8,5 +8,16 @@
         "pwdMessage": "Please input your password",
         "usernameMessage": "Please input your username",
         "submit": "login"
+    },
+    "layout": {
+        "superAdmin": "Super Admin",
+        "logout": "Logout"
+    },
+    "menu": {
+        "dashboard": "Dashboard",
+        "agvManage": "AGV Manage",
+        "agvList": "AGV List",
+        "agvDetail": "AGV Detail",
+        "sysManage": "System Settings"
     }
 }

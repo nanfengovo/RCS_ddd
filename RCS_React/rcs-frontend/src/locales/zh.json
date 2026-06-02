@@ -8,5 +8,16 @@
         "pwdMessage": "请输入密码",
         "usernameMessage": "请输入用户名",
         "submit": "登录"
+    },
+    "layout": {
+        "superAdmin": "超级管理员",
+        "logout": "退出登录"
+    },
+    "menu": {
+        "dashboard": "监控大盘",
+        "agvManage": "车辆调度",
+        "agvList": "车辆列表",
+        "agvDetail": "车辆详情",
+        "sysManage": "系统设置"
     }
 }

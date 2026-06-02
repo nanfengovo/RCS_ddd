@@ -1,9 +1,45 @@
-// 引入刚刚写好的独立登录组件
-import Login from './Pages/Login';
+import React, { useMemo } from 'react';
+import { RouterProvider } from 'react-router-dom';
+import { ConfigProvider, theme } from 'antd';
+import zhCN from 'antd/locale/zh_CN';
+import enUS from 'antd/locale/en_US';
+import { useTranslation } from 'react-i18next';
+import { router } from './router'; // 引入你的路由实例
+import { ThemeProvider, useTheme } from './contexts/ThemeContext';
 
-export default function App() {
-  // 目前我们只渲染 Login，后续加了 React Router，这里就会变成一堆 <Route> 标签
+// 🚀 内部组件：负责消费 Context，并将深浅色参数传递给 Ant Design 的配置引擎
+const AppConfig: React.FC = () => {
+  const { isDark } = useTheme();
+  const { i18n } = useTranslation();
+
+  const locale = useMemo(() => {
+    return i18n.language === 'en' ? enUS : zhCN;
+  }, [i18n.language]);
+
   return (
-    <Login />
+    <ConfigProvider 
+      locale={locale}
+      theme={{ 
+        // 这里会自动根据全局 isDark 切换 Antd 的底层算法
+        algorithm: isDark ? theme.darkAlgorithm : theme.defaultAlgorithm,
+        token: {
+          colorPrimary: '#4f46e5', // 科技蓝紫主色调
+          borderRadius: 6, 
+        }
+      }}
+    >
+      <RouterProvider router={router} />
+    </ConfigProvider>
   );
-}
+};
+
+// 🚀 全局入口：极其纯粹，只负责挂载 Context
+const App: React.FC = () => {
+  return (
+    <ThemeProvider>
+      <AppConfig />
+    </ThemeProvider>
+  );
+};
+
+export default App;
