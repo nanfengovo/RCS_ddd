@@ -1,47 +1,58 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
 
-// 1. 定义数据契约
 interface ThemeContextType {
   isDark: boolean;
   toggleTheme: () => void;
+  colorPrimary: string;
+  setColorPrimary: (color: string) => void;
+  // 🚀 新增：风格套餐控制
+  themeStyle: string; 
+  setThemeStyle: (styleName: string) => void; 
 }
 
-// 2. 创建 Context (提供默认值兜底)
 const ThemeContext = createContext<ThemeContextType>({
   isDark: true,
   toggleTheme: () => {},
+  colorPrimary: '#4f46e5',
+  setColorPrimary: () => {},
+  themeStyle: 'default',
+  setThemeStyle: () => {},
 });
 
-// 3. 导出自定义 Hook 供业务组件随时调用
 export const useTheme = () => useContext(ThemeContext);
 
-// 4. 导出 Provider 组件包裹全局
 export const ThemeProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  // 尝试从本地存储读取上次的主题偏好，默认深色
-  const [isDark, setIsDark] = useState<boolean>(() => {
-    const saved = localStorage.getItem('rcs_theme_isDark');
-    return saved !== null ? saved === 'true' : true;
-  });
+  const [isDark, setIsDark] = useState<boolean>(() => localStorage.getItem('rcs_isDark') !== 'false');
+  const [colorPrimary, setPrimary] = useState<string>(() => localStorage.getItem('rcs_color') || '#4f46e5');
+  
+  // 🚀 新增：初始化风格套餐
+  const [themeStyle, setStyle] = useState<string>(() => localStorage.getItem('rcs_style') || 'default');
 
-  // 每次切换时，不仅改状态，还存入本地，并给 HTML 根节点打上 Tailwind 的 dark 标签
   const toggleTheme = () => {
     setIsDark((prev) => {
-      const nextTheme = !prev;
-      localStorage.setItem('rcs_theme_isDark', String(nextTheme));
-      return nextTheme;
+      localStorage.setItem('rcs_isDark', String(!prev));
+      return !prev;
     });
   };
 
+  const setColorPrimary = (color: string) => {
+    setPrimary(color);
+    localStorage.setItem('rcs_color', color);
+  };
+
+  // 🚀 新增：保存风格套餐
+  const setThemeStyle = (styleName: string) => {
+    setStyle(styleName);
+    localStorage.setItem('rcs_style', styleName);
+  };
+
   useEffect(() => {
-    if (isDark) {
-      document.documentElement.classList.add('dark');
-    } else {
-      document.documentElement.classList.remove('dark');
-    }
+    if (isDark) document.documentElement.classList.add('dark');
+    else document.documentElement.classList.remove('dark');
   }, [isDark]);
 
   return (
-    <ThemeContext.Provider value={{ isDark, toggleTheme }}>
+    <ThemeContext.Provider value={{ isDark, toggleTheme, colorPrimary, setColorPrimary, themeStyle, setThemeStyle }}>
       {children}
     </ThemeContext.Provider>
   );

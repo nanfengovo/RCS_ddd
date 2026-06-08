@@ -11,7 +11,8 @@
     },
     "layout": {
         "superAdmin": "Super Admin",
-        "logout": "Logout"
+        "logout": "Logout",
+        "rcsConsole": "RCS Console"
     },
     "menu": {
         "dashboard": "Dashboard",

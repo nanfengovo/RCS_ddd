@@ -1,30 +1,32 @@
-import React, { useMemo } from 'react';
+import React from 'react';
 import { RouterProvider } from 'react-router-dom';
 import { ConfigProvider, theme } from 'antd';
 import zhCN from 'antd/locale/zh_CN';
-import enUS from 'antd/locale/en_US';
-import { useTranslation } from 'react-i18next';
-import { router } from './router'; // 引入你的路由实例
+import { router } from './router'; 
 import { ThemeProvider, useTheme } from './contexts/ThemeContext';
+import { themePresets } from './theme/presets'; // 🚀 引入你的军火库
 
-// 🚀 内部组件：负责消费 Context，并将深浅色参数传递给 Ant Design 的配置引擎
 const AppConfig: React.FC = () => {
-  const { isDark } = useTheme();
-  const { i18n } = useTranslation();
-
-  const locale = useMemo(() => {
-    return i18n.language === 'en' ? enUS : zhCN;
-  }, [i18n.language]);
+  // 🚀 把 themeStyle 也解构出来
+  const { isDark, colorPrimary, themeStyle } = useTheme(); 
+  
+  // 🚀 根据用户选择，抽出对应的预设配置
+  const baseStyle = themePresets[themeStyle] || themePresets.default;
 
   return (
     <ConfigProvider 
-      locale={locale}
+      locale={zhCN}
       theme={{ 
-        // 这里会自动根据全局 isDark 切换 Antd 的底层算法
+        // 1. 展开预设套餐里的所有配置 (比如 borderRadius, components 重写)
+        ...baseStyle, 
+        
+        // 2. 强行注入深浅色算法
         algorithm: isDark ? theme.darkAlgorithm : theme.defaultAlgorithm,
+        
+        // 3. 强行注入用户选中的主色调 (这会覆盖套餐里的 token，优先级最高)
         token: {
-          colorPrimary: '#4f46e5', // 科技蓝紫主色调
-          borderRadius: 6, 
+          ...baseStyle.token,
+          colorPrimary: colorPrimary, 
         }
       }}
     >
@@ -33,7 +35,6 @@ const AppConfig: React.FC = () => {
   );
 };
 
-// 🚀 全局入口：极其纯粹，只负责挂载 Context
 const App: React.FC = () => {
   return (
     <ThemeProvider>

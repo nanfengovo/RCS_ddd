@@ -11,7 +11,8 @@
     },
     "layout": {
         "superAdmin": "超级管理员",
-        "logout": "退出登录"
+        "logout": "退出登录",
+        "rcsConsole": "RCS 控制台"
     },
     "menu": {
         "dashboard": "监控大盘",
