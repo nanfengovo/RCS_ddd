@@ -18,8 +18,6 @@ export const router = createBrowserRouter([
       
       // 业务页面插槽
       { path: 'dashboard', element: <div>监控大盘组件加载处</div> },
-      { path: 'agv/list', element: <div>车辆列表组件加载处</div> },
-      { path: 'agv/detail/:id', element: <div>车辆详情组件加载处</div> },
       
       { path: '*', element: <div>404 不存在或无权限访问</div> }
     ]
